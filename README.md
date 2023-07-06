@@ -1,3 +1,6 @@
+# Demo
+A demo to implement the examples mentioned in the paper.
+
 # ImageBind: One Embedding Space To Bind Them All
 
 **[FAIR, Meta AI](https://ai.facebook.com/research/)** 
