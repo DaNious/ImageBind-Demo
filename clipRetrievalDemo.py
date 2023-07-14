@@ -29,8 +29,8 @@ model.eval()
 model.to(device)
 
 # %% Load data
-imgPath = ["res/apples.jpg", ]
-audPath = [".assets/car_audio.wav", ]
+imgPath = [".assets/image/car_image.jpg", ]
+audPath = [".assets/sound/car_audio.wav", ]
 txtList=["A dog.", "A car", "A bird"]
 # depPath = ["res/office_depth.jpg", ]
 
@@ -55,7 +55,6 @@ with torch.no_grad():
 embVision = embeddings[ModalityType.VISION] / embeddings[ModalityType.VISION].norm(p=2, dim=-1, keepdim=True)
 embAudio = embeddings[ModalityType.AUDIO] / embeddings[ModalityType.AUDIO].norm(p=2, dim=-1, keepdim=True)
 embText = embeddings[ModalityType.TEXT] / embeddings[ModalityType.TEXT].norm(p=2, dim=-1, keepdim=True)
-embDepth = embeddings[ModalityType.DEPTH] / embeddings[ModalityType.DEPTH].norm(p=2, dim=-1, keepdim=True)
 # plt.plot(embVision[0].cpu())
 # plt.plot(embAudio[0].cpu())
 # plt.show()
@@ -75,4 +74,5 @@ client = ClipClient(
 results = client.query(embedding_input=embAudio[0].tolist())
 for i in results:
     log_result(i)
+
 # %%

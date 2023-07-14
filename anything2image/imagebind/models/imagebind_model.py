@@ -7,22 +7,33 @@
 
 
 import os
+import urllib
 from functools import partial
 from types import SimpleNamespace
 
 import torch
 import torch.nn as nn
 
-from models.helpers import (EinOpsRearrange, LearnableLogitScaling, Normalize,
-                            SelectElement, SelectEOSAndProject)
-from models.multimodal_preprocessors import (AudioPreprocessor,
-                                             IMUPreprocessor, PadIm2Video,
-                                             PatchEmbedGeneric,
-                                             RGBDTPreprocessor,
-                                             SpatioTemporalPosEmbeddingHelper,
-                                             TextPreprocessor,
-                                             ThermalPreprocessor)
-from models.transformer import MultiheadAttention, SimpleTransformer
+from .helpers import (
+    EinOpsRearrange,
+    LearnableLogitScaling,
+    Normalize,
+    SelectElement,
+    SelectEOSAndProject,
+)
+from .multimodal_preprocessors import (
+    AudioPreprocessor,
+    IMUPreprocessor,
+    PadIm2Video,
+    PatchEmbedGeneric,
+    RGBDTPreprocessor,
+    SpatioTemporalPosEmbeddingHelper,
+    TextPreprocessor,
+    ThermalPreprocessor,
+)
+
+from .transformer import MultiheadAttention, SimpleTransformer
+
 
 ModalityType = SimpleNamespace(
     VISION="vision",
@@ -441,7 +452,7 @@ class ImageBindModel(nn.Module):
 
         return nn.ModuleDict(modality_postprocessors)
 
-    def forward(self, inputs):
+    def forward(self, inputs, normalize=True):
         outputs = {}
         for modality_key, modality_value in inputs.items():
             reduce_list = (
@@ -463,9 +474,10 @@ class ImageBindModel(nn.Module):
                 modality_value = self.modality_heads[modality_key](
                     modality_value, **head_inputs
                 )
-                modality_value = self.modality_postprocessors[modality_key](
-                    modality_value
-                )
+                if normalize:
+                    modality_value = self.modality_postprocessors[modality_key](
+                        modality_value
+                    )
 
                 if reduce_list:
                     modality_value = modality_value.reshape(B, S, -1)
@@ -476,7 +488,7 @@ class ImageBindModel(nn.Module):
         return outputs
 
 
-def imagebind_huge(pretrained=False):
+def imagebind_huge(pretrained=False, download_dir="checkpoints"):
     model = ImageBindModel(
         vision_embed_dim=1280,
         vision_num_blocks=32,
@@ -490,17 +502,20 @@ def imagebind_huge(pretrained=False):
     )
 
     if pretrained:
-        if not os.path.exists("checkpoints/imagebind_huge.pth"):
-            print(
-                "Downloading imagebind weights to checkpoints/imagebind_huge.pth ..."
-            )
-            os.makedirs("checkpoints", exist_ok=True)
+        path = os.path.join(download_dir, 'imagebind_huge.pth')
+        # if we have ckpt in current dir, do not download.
+        default_path = os.path.join('checkpoints', 'imagebind_huge.pth')
+        if os.path.exists(default_path):
+            path = default_path
+        if not os.path.exists(path):
+            print(f"Downloading imagebind weights to {path} ...")
+            os.makedirs(download_dir, exist_ok=True)
             torch.hub.download_url_to_file(
                 "https://dl.fbaipublicfiles.com/imagebind/imagebind_huge.pth",
-                "checkpoints/imagebind_huge.pth",
+                path,
                 progress=True,
             )
 
-        model.load_state_dict(torch.load("checkpoints/imagebind_huge.pth"))
+        model.load_state_dict(torch.load(path))
 
     return model

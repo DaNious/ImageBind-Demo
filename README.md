@@ -1,8 +1,20 @@
 # Demo
 A demo to implement the examples mentioned in the paper. 
 
+## Prerequisite
+1. Install packages for ImageBind as instructed by the original repository.
+2. Install clip-retrieval by running **pip install clip-retrieval**
+3. Install Anything2Image by running **pip install anything2image**
+
+### P.S. 
+1. If OSError occurs as **"*undefined symbol: cublasLtHSHMatmulAlgoInit, version libcublasLt.so.11*"**, run **pip uninstall nvidia_cublas_cu11** to uninstall unmatched CUDA packages automatically installed with PyTorch.
+2. Install ipykernel as needed.
+
 ## Image Retrieval
 Use **[clip-retrival](https://github.com/rom1504/clip-retrieval)** APIs to query **[clip-retrieval ui](https://rom1504.github.io/clip-retrieval/?back=https%3A%2F%2Fknn.laion.ai&index=laion5B-H-14&useMclip=false)** for images.
+
+## Image Generation
+Reference: **[Anything2Image](https://github.com/Zeqiang-Lai/Anything2Image)**
 
 
 # ImageBind: One Embedding Space To Bind Them All
