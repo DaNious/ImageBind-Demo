@@ -1,5 +1,9 @@
 # Demo
-A demo to implement the examples mentioned in the paper.
+A demo to implement the examples mentioned in the paper. 
+
+## Image Retrieval
+Use **[clip-retrival](https://github.com/rom1504/clip-retrieval)** APIs to query **[clip-retrieval ui](https://rom1504.github.io/clip-retrieval/?back=https%3A%2F%2Fknn.laion.ai&index=laion5B-H-14&useMclip=false)** for images.
+
 
 # ImageBind: One Embedding Space To Bind Them All
 
